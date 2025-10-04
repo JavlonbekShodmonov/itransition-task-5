@@ -30,16 +30,18 @@ export async function POST(req: Request) {
       confirmationToken: token
     });
 
-     const confirmUrl = `${process.env.NEXT_PUBLIC_APP_URL}/confirm/${token}`;
-    // ✅ Send confirmation email with Resend
+    const confirmUrl = `${process.env.NEXT_PUBLIC_APP_URL}/confirm/${token}`;
+    
+    // ✅ Send confirmation email with plain URL
     await resend.emails.send({
       from: "onboarding@resend.dev",
       to: email,
       subject: "Confirm your email",
       html: `
         <p>Hello ${name},</p>
-        <p>Please confirm your account by clicking the link below:</p>
-<p>Please confirm your account by clicking <a href="${confirmUrl}">this link</a>.</p>      `
+        <p>Please confirm your account by visiting this URL:</p>
+        <p>${confirmUrl}</p>
+      `
     });
 
     return NextResponse.json({ message: "Registered. Check email to confirm." });

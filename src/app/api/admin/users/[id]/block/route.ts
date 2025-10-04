@@ -4,11 +4,13 @@ import User from "../../../../../../models/User";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const id = context.params.id;
+
   try {
     await dbConnect();
-    const user = await User.findById(params.id);
+    const user = await User.findById(id);
 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });

@@ -1,6 +1,6 @@
 // middleware.ts
 import { NextResponse } from "next/server";
-import { verifyToken } from "../src/app/lib/jwt";
+import { verifyToken } from "./src/lib/jwt";
 
 export async function middleware(req: Request) {
   const url = new URL(req.url);

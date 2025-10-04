@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     await dbConnect();
-    const { token } = await ctx.params; // ✅ unwrap params
+    const { token } = await ctx.params;
 
     const user = await User.findOne({ confirmationToken: token });
     if (!user)
@@ -16,12 +16,17 @@ export async function GET(
     if (user.status === "blocked")
       return NextResponse.json({ message: "Blocked" }, { status: 403 });
 
+    // ✅ Set both status and isAdmin
     user.status = "active";
+    user.isAdmin = true; // 🔥 THIS WAS MISSING!
     user.confirmationToken = undefined;
     await user.save();
 
-    return NextResponse.redirect(new URL("/admin/users", "http://localhost:3552"));
-  } catch {
+    // Use environment variable for redirect URL (works on both local and Render)
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    return NextResponse.redirect(new URL("/login", baseUrl));
+  } catch (error) {
+    console.error("Email confirmation error:", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }

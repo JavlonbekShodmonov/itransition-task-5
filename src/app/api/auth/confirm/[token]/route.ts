@@ -18,13 +18,15 @@ export async function GET(
 
     // ✅ Set both status and isAdmin
     user.status = "active";
-    user.isAdmin = true; // 🔥 THIS WAS MISSING!
+    user.isAdmin = true;
     user.confirmationToken = undefined;
     await user.save();
 
-    // Use environment variable for redirect URL (works on both local and Render)
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3552";
-    return NextResponse.redirect(new URL("/login", baseUrl));
+    // Return JSON instead of redirect - let frontend handle it
+    return NextResponse.json({ 
+      message: "Email confirmed successfully",
+      success: true 
+    });
   } catch (error) {
     console.error("Email confirmation error:", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });

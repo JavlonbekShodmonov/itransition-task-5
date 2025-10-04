@@ -23,7 +23,7 @@ export async function GET(
     await user.save();
 
     // Use environment variable for redirect URL (works on both local and Render)
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3552";
     return NextResponse.redirect(new URL("/login", baseUrl));
   } catch (error) {
     console.error("Email confirmation error:", error);

@@ -4,11 +4,11 @@ import User from "../../../../../../models/User";
 
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } } // must be exactly like this
+  context: { params: Promise<{ id: string }> }
 ) {
   await dbConnect();
 
-  const { id } = context.params;
+  const { id } = await context.params;
 
   if (!id) {
     return NextResponse.json({ message: "User ID is required" }, { status: 400 });

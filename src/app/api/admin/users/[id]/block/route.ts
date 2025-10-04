@@ -2,14 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "../../../../../../lib/mongodb";
 import User from "../../../../../../models/User";
 
-
-interface Params {
-  params: {
-    id: string;
-  };
-}
-
-export async function PATCH(req: Request, {params}: Params) {
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   await dbConnect();
 
   const { id } = params;

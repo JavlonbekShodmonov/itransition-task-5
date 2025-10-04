@@ -4,12 +4,14 @@ import User from "../../../../../../models/User";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
 
-    const user = await User.findById(params.id);
+    const { id } = await params;
+
+    const user = await User.findById(id);
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }

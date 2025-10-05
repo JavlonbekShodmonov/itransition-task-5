@@ -3,9 +3,16 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import User from "../../../../models/User";
 import { dbConnect } from "../../../../lib/mongodb";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Create transporter for Gmail
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
+  }
+});
 
 function getUniqIdValue(prefix = "") {
   return prefix + crypto.randomBytes(10).toString("hex");
@@ -32,9 +39,9 @@ export async function POST(req: Request) {
 
     const confirmUrl = `${process.env.NEXT_PUBLIC_APP_URL}/confirm/${token}`;
     
-    // ✅ Send confirmation email with plain URL
-    await resend.emails.send({
-      from: "onboarding@resend.dev",
+    // ✅ Send confirmation email with Nodemailer
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
       to: email,
       subject: "Confirm your email",
       html: `

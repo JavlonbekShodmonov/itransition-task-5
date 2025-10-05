@@ -1,21 +1,33 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Create transporter for Gmail
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
+  }
+});
 
 export async function POST(req: Request) {
   try {
     const { email, subject, message } = await req.json();
 
-    const data = await resend.emails.send({
-      from: "Your App <onboarding@resend.dev>",  // test domain provided by Resend
+    const info = await transporter.sendMail({
+      from: `Your App <${process.env.GMAIL_USER}>`,
       to: email, // recipient
       subject: subject || "Confirm your email",
       html: `<p>${message || "Thanks for signing up!"}</p>`,
     });
 
-    return NextResponse.json(data);
+    return NextResponse.json({ 
+      messageId: info.messageId,
+      accepted: info.accepted,
+      response: info.response 
+    });
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    console.error("Email error:", error);
+    return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
   }
 }
